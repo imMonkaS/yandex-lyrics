@@ -1,3 +1,20 @@
+const title = document.querySelector("title");
+
+const observer = new MutationObserver(() => {
+    titleText = title.innerHTML;
+    
+    // Трек скачанный
+    if (titleText.indexOf(".mp3") !== -1){
+        console.log("я пират!");
+    }
+    // Песня из яндекс музыки и это не главная странцица
+    else if (titleText.indexOf("—") !== -1 && titleText.split[0] !== "Яндекс" && titleText.split[1] !== "Музыка"){
+        console.log("я легавый!");
+    }
+});
+
+observer.observe(title, { childList: true });
+
 function start(){
     let textField = document.querySelector('.sidebar__ads');
     textField.style.fontSize = '15px';
