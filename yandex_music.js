@@ -224,48 +224,62 @@ function createShowBtn(textField){
 }
 
 function createScrollBtn(){        
-        scrollBtn = document.createElement('button');
-        scrollBtn.classList.add('scroll-btn');
-        scrollBtn.style.padding = '15px';
-        scrollBtn.style.verticalAlign = 'text-bottom';
-        scrollBtn.innerHTML = 'Start Scrolling';
-        scrollBtn.style.fontSize = '15px';
-        scrollBtn.style.color = '#fff';
-        scrollBtn.style.outline = 'None';
-        scrollBtn.style.border = 'None';
-        scrollBtn.style.cursor = 'Pointer';
-        scrollBtn.style.background = 'None';
-        document.querySelector('.head-kids__user').insertBefore(scrollBtn, document.querySelector('.send-req-btn'));
-        let counter = 0;
-        scrollBtn.onclick = function(){
-            counter += 1;
-            if (counter == 1){
-                scrollBtn.innerHTML = 'Stop Scrolling';
-                pageScroll();
-                function pageScroll() {
-                    let progress = document.querySelector('.progress__bar.progress__text').getAttribute('data-played-time') / document.querySelector('.progress__bar.progress__text').getAttribute('data-duration');
-                    let max_height = document.querySelector('.sidebar__ads').offsetHeight * 0.69;
-
-                    document.querySelector('.sidebar__under').scrollTo(0, progress * max_height);
-                    scrolldelay = setTimeout(pageScroll,10);
-                }
+    scrollBtn = document.createElement('button');
+    scrollBtn.classList.add('scroll-btn');
+    scrollBtn.style.padding = '15px';
+    scrollBtn.style.verticalAlign = 'text-bottom';
+    scrollBtn.innerHTML = 'Start Scrolling';
+    scrollBtn.style.fontSize = '15px';
+    scrollBtn.style.color = '#fff';
+    scrollBtn.style.outline = 'None';
+    scrollBtn.style.border = 'None';
+    scrollBtn.style.cursor = 'Pointer';
+    scrollBtn.style.background = 'None';
+    document.querySelector('.head-kids__user').insertBefore(scrollBtn, document.querySelector('.send-req-btn'));
+    
+    let counter = 0;
+    scrollBtn.onclick = function(){
+        counter += 1;
+        if (counter == 1){
+            scrollBtn.innerHTML = 'Stop Scrolling';
+            let parts = Math.ceil(document.querySelector(".sidebar__ads").innerHTML.split("<br> <br>").length / 17);
+            let duration = document.querySelector('.progress__bar.progress__text').getAttribute('data-duration');
+            let timeToScroll = Math.ceil(duration / parts);
+            
+            pageScroll();
+            function pageScroll() {
+                let progress = document.querySelector('.progress__bar.progress__text').getAttribute('data-played-time');
+                let currentPart = Math.ceil(progress / Math.ceil(duration / parts)) - 1;
+                
+                document.querySelector('.sidebar__under').scrollTo(0, 700 * currentPart);
+                
+                scrolldelay = setTimeout(pageScroll,1000);
             }
-            else if (counter == 2){
-                counter = 0;
-                scrollBtn.innerHTML = 'Start Scrolling';
-                clearTimeout(scrolldelay);
-            }
+            
+//            function pageScroll() {
+//                let progress = document.querySelector('.progress__bar.progress__text').getAttribute('data-played-time') / document.querySelector('.progress__bar.progress__text').getAttribute('data-duration');
+//                let max_height = document.querySelector('.sidebar__ads').offsetHeight * 0.69;
+//
+//                document.querySelector('.sidebar__under').scrollTo(0, progress * max_height);
+//                scrolldelay = setTimeout(pageScroll,10);
+//            }
+        }
+        else if (counter == 2){
+            counter = 0;
+            scrollBtn.innerHTML = 'Start Scrolling';
+            clearTimeout(scrolldelay);
         }
     }
+}
 
 function createNecessaryContent(textField){
     if (document.querySelector('button.send-req-btn') === null){
         createShowBtn(textField);
     }
 
-    /*if (document.querySelector('button.scroll-btn') === null){
+    if (document.querySelector('button.scroll-btn') === null){
         createScrollBtn();
-    }*/
+    }
 }
 
 function start(){
