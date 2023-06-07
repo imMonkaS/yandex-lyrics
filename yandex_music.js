@@ -1,17 +1,10 @@
-/*$(window).on('load', function() {
-  console.log(document.querySelector(".teaser__img"));
-    if (document.querySelector('.teaser__content') !== null){
-        document.querySelector('.teaser__content').remove();
-    }
-});*/
-
 function deleteUnnecessaryContent(){
     if (document.querySelector('.teaser__content') !== null){
         document.querySelector('.teaser__content').remove();
     }
 }
 
-function trackDownloaded(textField){
+function trackDownloaded(textField, trackName){
     async function fetchAsync (url) {
         let response = await fetch(url);
         let data = await response.json();
@@ -81,7 +74,7 @@ function trackDownloaded(textField){
                 }
                 pageSpan.innerHTML = Lcounter + 1;
 
-                textField.innerHTML = "<span style='font-size: 22px; font-weight: bold'>" + document.title.split(".")[0] + " (" + originalAuthors[Lcounter][1] + " - " + originalAuthors[Lcounter][0] + ")" + "</span>" + "<br> </br>" + texts[Lcounter].replaceAll('\n', '<br> </br>');
+                textField.innerHTML = "<span style='font-size: 22px; font-weight: bold'>" + trackName.split(".")[0] + " (" + originalAuthors[Lcounter][1] + " - " + originalAuthors[Lcounter][0] + ")" + "</span>" + "<br> </br>" + texts[Lcounter].replaceAll('\n', '<br> </br>');
             }
 
             rightbtn.onclick = function(){
@@ -103,7 +96,7 @@ function trackDownloaded(textField){
             let pageSpan2 = document.createElement('span');
             let br1 = document.createElement('br');
             let br2 = document.createElement('br');
-            pageSpan1.innerHTML += "Для песни " + document.title.split('.')[0];
+            pageSpan1.innerHTML += "Для песни " + trackName.split('.')[0];
             pageSpan1.style.padding = '30px';
             pageSpan1.style.fontSize = '15px';
             pageSpan2.innerHTML += "в Yandex API текста нет";
@@ -119,15 +112,15 @@ function trackDownloaded(textField){
             divContainer.remove();
         }
     }
-    if (document.title.indexOf('-') > -1){
-        fetchAsync("https://api.music.yandex.net/search?text=" + document.title.split(" - ")[0] + "&page=0&type=all&nococrrect=false");
+    if (trackName.indexOf('-') > -1){
+        fetchAsync("https://api.music.yandex.net/search?text=" + trackName.split(" - ")[0] + "&page=0&type=all&nococrrect=false");
     }
     else{
-        fetchAsync("https://api.music.yandex.net/search?text=" + document.title.split(".")[0] + "&page=0&type=all&nococrrect=false");
+        fetchAsync("https://api.music.yandex.net/search?text=" + trackName.split(".")[0] + "&page=0&type=all&nococrrect=false");
     }
 }
 
-function trackFromYandexMusic(textField){
+function trackFromYandexMusic(textField, trackName){
     if (document.querySelector('.lyrics-holder-container') !== null){
         document.querySelector('.lyrics-holder-container').remove()
     }
@@ -141,7 +134,7 @@ function trackFromYandexMusic(textField){
         // Трек есть в YandexAPI
         if (data['result']['lyrics'] !== undefined){
             lyrics = data['result']['lyrics']['fullLyrics'];
-            textField.innerHTML = "<span style='font-size: 22px; font-weight: bold'>" + document.title + "</span>" + "<br> </br>" + lyrics.replaceAll('\n', '<br> </br>');
+            textField.innerHTML = "<span style='font-size: 22px; font-weight: bold'>" + trackName + "</span>" + "<br> </br>" + lyrics.replaceAll('\n', '<br> </br>');
         }
         
         // Трека нет в YandexAPI
@@ -161,7 +154,7 @@ function trackFromYandexMusic(textField){
             let pageSpan2 = document.createElement('span');
             let br1 = document.createElement('br');
             let br2 = document.createElement('br');
-            pageSpan1.innerHTML += "Для песни " + document.title;
+            pageSpan1.innerHTML += "Для песни " + trackName;
             pageSpan1.style.padding = '30px';
             pageSpan1.style.fontSize = '15px';
             pageSpan2.innerHTML += "в Yandex API текста нет";
@@ -277,28 +270,39 @@ function start(){
     
     deleteUnnecessaryContent();
     
+    // Окно трека внизу уже есть
+    if(document.querySelector(".track__title").innerHTML !== null){
+        createNecessaryContent(textField);
+        // Трек из Яндекс Музыки
+        if (document.querySelector(".track__name-innerwrap").children[0].getAttribute('href') !== null){
+            let trackName = document.querySelector(".track__title").innerHTML + "—" + document.querySelector(".track__title").parentElement.parentElement.children[1].firstChild.firstChild.innerHTML;
+            
+            trackFromYandexMusic(textField, trackName);
+        }
+        // Трек скачанный
+        else{
+            trackDownloaded(textField, document.querySelector(".track__title").innerHTML)
+        }
+    }
+    
     // OBSERVER
     const title = document.querySelector("title");
 
     const observer = new MutationObserver(() => {
-        setTimeout(function(){
+        function observerBody(){
             deleteUnnecessaryContent();
             createNecessaryContent(textField);
-        
-            titleText = title.innerHTML;
-            if (document.querySelector('.teaser__content') !== null){
-                document.querySelector('.teaser__content').remove();
-            }
 
             // Трек скачанный
-            if (titleText.indexOf(".mp3") !== -1){
-                trackDownloaded(textField);
+            if (title.innerHTML.indexOf(".mp3") !== -1){
+                trackDownloaded(textField, title.innerHTML);
             }
             // Песня из яндекс музыки и это не главная странцица
-            else if (titleText.indexOf("—") !== -1 && titleText.split[0] !== "Яндекс" && titleText.split[1] !== "Музыка"){
-                trackFromYandexMusic(textField);
+            else if (title.innerHTML.indexOf("—") !== -1 && title.innerHTML.split[0] !== "Яндекс" && title.innerHTML.split[1] !== "Музыка"){
+                trackFromYandexMusic(textField, title.innerHTML);
             }
-        }, 500);
+        }
+        setTimeout(observerBody(), 500);
     });
 
     observer.observe(title, { childList: true });
