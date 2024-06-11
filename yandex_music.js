@@ -363,7 +363,7 @@ function trackDownloaded(textField, trackTitle){
     async function fetchAsync (url) {
         let response = await fetch(url);
         let data = await response.json();
-        console.log(data);
+        // console.log(data);
         results = [];
 
         let originalAuthors = []
@@ -485,7 +485,7 @@ function show_lyrics(trackId, trackTitle){
     .then((data) => {
         try{
             // const data = data['result']['tracks']['results'].slice(0, 10);
-            console.log(data);
+            // console.log(data);
             // Трек есть в YandexAPI
             let textField = document.querySelector('.sidebar__ads');
             if (data['result']['lyrics'] !== undefined){
@@ -512,12 +512,12 @@ window.addEventListener("load", function() {
             const track = externalAPI.getCurrentTrack();
 
             if (track) {
-                console.log(track);
+                // console.log(track);
                 // скачанный
                 if (track.cover === undefined){
                     // console.log("я скачанный");
                     const trackTitle = generateTrackTitle(track);
-                    console.log(trackTitle);
+                    // console.log(trackTitle);
                     // show_downloaded_lyrics(trackTitle);
                     trackDownloaded(document.querySelector('.sidebar__ads'), trackTitle);
                 }
