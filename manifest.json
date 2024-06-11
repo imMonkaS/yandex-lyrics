@@ -7,8 +7,9 @@
   "host_permissions": ["https://*.yandex.ru/*"],
   "content_scripts": [
       {
+        "world": "MAIN",
         "matches": ["https://music.yandex.ru/*"],
-        "js": ["jquery.min.js", "yandex_music.js"],
+        "js": ["yandex_music.js"],
         "run_at": "document_end"
       }
     ],
