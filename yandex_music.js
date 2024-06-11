@@ -523,6 +523,9 @@ window.addEventListener("load", function() {
                 }
                 // не скачанный
                 else{
+                    if (document.querySelector('.lyrics-holder-container') !== null){
+                        document.querySelector('.lyrics-holder-container').remove()
+                    }
                     // console.log("я не скачанный");
                     const trackId = track.link.split('/')[4]
                     const trackTitle = generateTrackTitle(track);
